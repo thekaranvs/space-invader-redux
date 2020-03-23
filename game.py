@@ -5,15 +5,13 @@ import math
 pygame.init()  # Initialize pygame
 
 screen = pygame.display.set_mode((800, 600))  # Used to create screen
-
+crazy_mode = [4,6]
 # Title and Icon and Music
 pygame.display.set_caption("Space Invaders")
 icon = pygame.image.load("UFO-icon.png")
 pygame.display.set_icon(icon)
-track = pygame.mixer.music.load("music2.mp3")
-pygame.mixer.music.play(-11)
 background = pygame.image.load("background.jpg")
-
+background2 = pygame.image.load("background2.jpg")
 # Enemy
 enemyImg = []
 enemyX = []
@@ -25,7 +23,7 @@ for i in range(num_enemies):
     enemyImg.append(pygame.image.load("enemy.png"))
     enemyX.append(random.randint(0, 736))
     enemyY.append(random.randint(50, 150))
-    enemy_X_change.append(4)
+    enemy_X_change.append(crazy_mode[0])
     enemy_Y_change.append(40)
 # Bullet
 bulletImg = pygame.image.load("bullet.png")
@@ -81,12 +79,25 @@ def isCollision(x1, y1, x2, y2):
     else:
         return False
 
+def crazy():
+    for i in range(num_enemies):
+        enemy_X_change[i] = crazy_mode[1]
 
+def music_change(i):
+    music = "music2.mp3"
+    if i==1:
+        music = "music2.mp3"
+    else:
+        music = "music.mp3"
+    track = pygame.mixer.music.load(music)
+    pygame.mixer.music.play(-1)
+music_change(1)
+background_choice = background
 # Game Loop
 running = True
 while running:
     screen.fill((0, 0, 0))
-    screen.blit(background, (0, 0))
+    screen.blit(background_choice, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
@@ -107,9 +118,14 @@ while running:
                 Xchange = 0
     playerX += Xchange
     if playerX <= 0:
-        playerX += 800
+        background_choice = background
+        playerX = 736
+        music_change(1)
     if playerX >= 800:
-        playerX -= 800
+        background_choice = background2
+        playerX = 0
+        crazy()
+        music_change(2)
     # Enemy Movement
     for i in range(num_enemies):
         # Game Over
